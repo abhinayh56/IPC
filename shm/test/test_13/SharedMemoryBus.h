@@ -40,6 +40,20 @@ struct Pose
     uint64_t time_stamp_ms = 0;
     Translation translation;
     Orientation orientation;
+
+    void disp()
+    {
+        std::cout
+            << seq << ", "
+            << time_stamp_ms << ", "
+            << translation.x << ", "
+            << translation.y << ", "
+            << translation.z << ", "
+            << orientation.q0 << ", "
+            << orientation.q1 << ", "
+            << orientation.q2 << ", "
+            << orientation.q3 << std::endl;
+    }
 };
 
 template <typename T>

@@ -13,17 +13,9 @@ int main(int argc, char *argv[])
 
     while (true)
     {
-        std::cout
-            << "W: "
-            << pose.seq << ", "
-            << pose.time_stamp_ms << ", "
-            << pose.translation.x << ", "
-            << pose.translation.y << ", "
-            << pose.translation.z << ", "
-            << pose.orientation.q0 << ", "
-            << pose.orientation.q1 << ", "
-            << pose.orientation.q2 << ", "
-            << pose.orientation.q3 << std::endl;
+        std::cout << "W: ";
+        pose.disp();
+
         // if (!std::getline(std::cin, line)) break;
 
         try
