@@ -62,6 +62,8 @@
         "numbers": "cpp",
         "stop_token": "cpp",
         "streambuf": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "csignal": "cpp",
+        "semaphore": "cpp"
     }
 }
