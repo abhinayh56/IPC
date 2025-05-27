@@ -64,6 +64,7 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "csignal": "cpp",
-        "semaphore": "cpp"
+        "semaphore": "cpp",
+        "core": "cpp"
     }
 }
