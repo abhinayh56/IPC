@@ -13,11 +13,11 @@ constexpr const char *SHM_NAME = "/shm_message_bus";
 constexpr size_t SHM_SIZE = 1000;
 
 template <typename T>
-struct Shared_data
+struct alignas(64) Shared_data
 {
     std::atomic<uint64_t> counter;
     uint64_t offset = 0;
-    T data;
+    alignas(64) T data;
 };
 
 template <typename T>
