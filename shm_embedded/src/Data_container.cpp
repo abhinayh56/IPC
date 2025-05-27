@@ -1,6 +1,7 @@
 #include "Data_container.h"
 
 uint8_t Data_container::buffer[BUFFER_SIZE] = {0};
+uint32_t index_empty = 0;
 
 Data_container &Data_container::getInstance()
 {

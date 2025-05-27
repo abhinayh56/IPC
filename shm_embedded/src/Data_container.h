@@ -18,6 +18,7 @@ public:
 
 private:
     static uint8_t buffer[BUFFER_SIZE];
+    static uint32_t index_empty;
     Data_container();
 };
 
