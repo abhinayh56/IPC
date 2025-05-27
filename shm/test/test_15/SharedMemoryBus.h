@@ -20,8 +20,7 @@ struct alignas(64) Shared_data
 
 constexpr const char *SHM_NAME = "/shm_message_bus";
 constexpr size_t MAX_INSTANCES = 8;
-template <typename T>
-constexpr size_t SHM_SIZE = MAX_INSTANCES * sizeof(Shared_data<T>) + 64; // padded total sizeces to store
+constexpr size_t SHM_SIZE = 10000; // padded total sizeces to store
 
 template <typename T>
 class SharedMemoryBusArray
@@ -37,7 +36,7 @@ public:
                 throw std::runtime_error("shm_open failed");
             }
 
-            if (ftruncate(m_shm_fd, SHM_SIZE<T>) == -1)
+            if (ftruncate(m_shm_fd, SHM_SIZE) == -1)
             {
                 throw std::runtime_error("ftruncate failed");
             }
@@ -55,16 +54,16 @@ public:
             m_is_owner = false;
         }
 
-        void *ptr = mmap(nullptr, SHM_SIZE<T>, PROT_READ | PROT_WRITE, MAP_SHARED, m_shm_fd, 0);
+        void *ptr = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, m_shm_fd, 0);
         if (ptr == MAP_FAILED)
         {
             throw std::runtime_error("mmap failed");
         }
 
-        if (mlock(ptr, SHM_SIZE<T>) != 0)
+        if (mlock(ptr, SHM_SIZE) != 0)
         {
             perror("mlock failed");
-            munmap(ptr, SHM_SIZE<T>);
+            munmap(ptr, SHM_SIZE);
             close(m_shm_fd);
             if (m_is_owner)
             {
@@ -95,8 +94,8 @@ public:
 
     ~SharedMemoryBusArray()
     {
-        munlock(m_base, SHM_SIZE<T>);
-        munmap(m_base, SHM_SIZE<T>);
+        munlock(m_base, SHM_SIZE);
+        munmap(m_base, SHM_SIZE);
         close(m_shm_fd);
         if (m_is_owner)
         {
