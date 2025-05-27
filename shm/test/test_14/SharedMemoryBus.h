@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <atomic>
+#include <stdexcept>
 
 constexpr const char *SHM_NAME = "/shm_message_bus";
 constexpr size_t SHM_SIZE = 1000;
@@ -57,6 +58,19 @@ public:
             throw std::runtime_error("mmap failed");
         }
 
+        // Lock memory to prevent swapping (real-time requirement)
+        if (mlock(ptr, SHM_SIZE) != 0)
+        {
+            perror("mlock failed");
+            munmap(ptr, SHM_SIZE);
+            close(m_shm_fd);
+            if (m_is_owner)
+            {
+                shm_unlink(SHM_NAME);
+            }
+            throw std::runtime_error("mlock failed");
+        }
+
         m_data = static_cast<Shared_data<T> *>(ptr);
 
         if (create)
@@ -69,6 +83,7 @@ public:
 
     ~SharedMemoryBus()
     {
+        munlock(m_data, SHM_SIZE); // Unlock locked memory
         munmap(m_data, SHM_SIZE);
         close(m_shm_fd);
         if (m_is_owner)
@@ -100,9 +115,9 @@ public:
     }
 
 private:
-    Shared_data<T> *m_data;
-    int m_shm_fd;
-    bool m_is_owner;
+    Shared_data<T> *m_data = nullptr;
+    int m_shm_fd = -1;
+    bool m_is_owner = false;
 };
 
 #endif // SHARED_MEMORY_BUS_H
