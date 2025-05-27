@@ -80,8 +80,7 @@ public:
     void write(const T &data_in)
     {
         std::memcpy(&m_data->data, &data_in, sizeof(m_data->data));
-        std::atomic_thread_fence(std::memory_order_release);
-        m_data->counter.fetch_add(1, std::memory_order_relaxed);
+        m_data->counter.fetch_add(1, std::memory_order_acq_rel);
         m_data->offset = 0;
     }
 
@@ -89,13 +88,12 @@ public:
     {
         static thread_local uint64_t last_counter = 0;
 
-        uint64_t current = m_data->counter.load(std::memory_order_relaxed);
+        uint64_t current = m_data->counter.load(std::memory_order_acquire);
         if (current == last_counter)
         {
             return false; // No new message
         }
 
-        std::atomic_thread_fence(std::memory_order_acquire);
         data_out = m_data->data;
         last_counter = current;
         return true;
