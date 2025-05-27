@@ -1,6 +1,7 @@
 #include "SharedMemoryBus.h"
 #include <thread>
 #include <chrono>
+#include "Msg.h"
 
 int main()
 {

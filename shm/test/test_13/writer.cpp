@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
+#include "Msg.h"
 
 int main(int argc, char *argv[])
 {
