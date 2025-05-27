@@ -70,7 +70,6 @@ public:
     }
 };
 
-
 int main()
 {
     SensorModule sensor;
