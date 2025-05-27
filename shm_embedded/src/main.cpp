@@ -3,12 +3,17 @@
 class SensorModule
 {
 public:
+    SensorModule(){}
+    ~SensorModule(){}
     void updateData()
     {
-        uint8_t sensorData[4] = {14, 27, 150, 45};
-        Data_container::getInstance().write(sensorData, sizeof(sensorData));
-        std::cout << "W: " << uint16_t(sensorData[0]) << ", " << uint16_t(sensorData[1]) << ", " << uint16_t(sensorData[2]) << ", " << uint16_t(sensorData[3]) << std::endl;
+        // Data_container::getInstance().write(sensorData, sizeof(sensorData));
+        // std::cout << "W: " << uint16_t(sensorData[0]) << ", " << uint16_t(sensorData[1]) << ", " << uint16_t(sensorData[2]) << ", " << uint16_t(sensorData[3]) << std::endl;
     }
+
+private:
+    // uint8_t sensorData[4] = {14, 27, 150, 45};
+    Data_element<uint8_t*> sensorData[4] = {14, 27, 150, 45}
 };
 
 // Example Consumer
