@@ -10,9 +10,10 @@
 constexpr const char* SHM_NAME = "/shm_message_bus";
 constexpr size_t MESSAGE_SIZE = 256;
 
-struct SharedData {
-    std::atomic<uint64_t> counter;           // Writer increments after writing
-    unsigned long message;              // Latest message
+// Ensure alignment to avoid false sharing and improve cache coherency
+struct alignas(64) SharedData {
+    alignas(64) std::atomic<uint64_t> counter; // Writer increments after writing
+    alignas(64) unsigned long message;         // Latest message
 };
 
 class SharedMemoryBus {
@@ -45,7 +46,7 @@ public:
 
         if (create) {
             new (&data_->counter) std::atomic<uint64_t>(0); // placement new
-            std::memset(&data_->message, 0, MESSAGE_SIZE);
+            std::memset(&data_->message, 0, sizeof(data_->message));
         }
     }
 
@@ -56,11 +57,8 @@ public:
     }
 
     // Writer API
-    void publish(unsigned long& msg) {
-        // if (msg.size() >= MESSAGE_SIZE)
-        //     throw std::runtime_error("Message too long");
-
-        std::memcpy(&data_->message, &msg, 8 + 1);
+    void publish(const unsigned long& msg) {
+        std::memcpy(&data_->message, &msg, sizeof(unsigned long));
         std::atomic_thread_fence(std::memory_order_release);
         data_->counter.fetch_add(1, std::memory_order_relaxed);
     }
