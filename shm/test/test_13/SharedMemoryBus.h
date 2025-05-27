@@ -10,14 +10,7 @@
 #include <atomic>
 
 constexpr const char *SHM_NAME = "/shm_message_bus";
-constexpr size_t MESSAGE_SIZE = 1000;
-
-// // Ensure alignment to avoid false sharing and improve cache coherency
-// struct alignas(64) SharedData
-// {
-//     alignas(64) std::atomic<uint64_t> counter;
-//     alignas(64) unsigned long message;
-// };
+constexpr size_t SHM_SIZE = 1000;
 
 struct Translation
 {
@@ -78,7 +71,7 @@ public:
                 throw std::runtime_error("shm_open failed");
             }
 
-            if (ftruncate(m_shm_fd, sizeof(Shared_data<T>)) == -1)
+            if (ftruncate(m_shm_fd, SHM_SIZE) == -1)
             {
                 throw std::runtime_error("ftruncate failed");
             }
