@@ -7,14 +7,16 @@ int main()
     Pose pose;
 
     // Write to slot 0
-    bus.write(0, pose);
+    // bus.write(0, pose);
 
-    // Read from slot 0
-    Pose out;
-    if (bus.read(0, out))
-    {
-        out.disp();
-    }
+    // // Read from slot 0
+    // Pose out;
+    // if (bus.read(0, out))
+    // {
+    //     out.disp();
+    // }
+
+    std::cout << "Complete" << std::endl;
 
     return 0;
 }
