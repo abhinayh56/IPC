@@ -30,8 +30,8 @@ public:
         if ((m_index + sizeof(Data_element<T>)) < BUFFER_SIZE)
         {
             data_element.offset = m_index;
-            data_element.length = sizeof(Data_element<T>)
-                m_index += data_element.length;
+            data_element.length = sizeof(Data_element<T>);
+            m_index += data_element.length;
         }
         else
         {
@@ -42,13 +42,13 @@ public:
     template <typename T>
     void write(const Data_element<T> &data_element)
     {
-        memcpy(&m_buffer[data_element.offset], data_element.data, data_element.length);
+        memcpy(&m_buffer[data_element.offset], &data_element.data, data_element.length);
     }
 
     template <typename T>
     void read(Data_element<T> &data_element)
     {
-        memcpy(data_element.data, &m_buffer[data_element.offset], data_element.length);
+        memcpy(&data_element.data, &m_buffer[data_element.offset], data_element.length);
     }
 
 private:
