@@ -11,11 +11,11 @@
 #include <stdexcept>
 
 template <typename T>
-struct alignas(64) Shared_data
+struct alignas(64) Shared_data_element
 {
     std::atomic<uint64_t> counter;
     bool registered = false;
-    uint64_t offset = 0;
+    uint64_t index = 0;
     alignas(64) T data;
 };
 
@@ -88,12 +88,27 @@ public:
         }
     }
 
-    void register_data(Shared_data<T> &shared_data)
+    void register_data(Shared_data_element<T> &shared_data)
     {
-        auto p = reinterpret_cast<Shared_data<T> *>(m_base + sizeof(Shared_data<T>));
-        new (&p->counter) std::atomic<uint64_t>(0);
-        std::memset(&p->data, 0, sizeof(T));
-        std::memset(&p->offset, 0, sizeof(p->offset));
+        if (shared_data.registered == false)
+        {
+            Shared_data_element<T> *p = reinterpret_cast<Shared_data_element<T> *>(m_base + sizeof(Shared_data_element<T>));
+            std::cout << "sizeof(Shared_data_element<T>): " << sizeof(Shared_data_element<T>) << "\n";
+            new (&p->counter) std::atomic<uint64_t>(0);
+            std::memset(&p->data, 0, sizeof(T));
+            shared_data.index = reinterpret_cast<uint64_t>(p);
+            shared_data.registered = true;
+
+            std::cout << "---\n";
+            std::cout << reinterpret_cast<Shared_data_element<T> *>(shared_data.index) << std::endl;
+
+            m_base = reinterpret_cast<uint8_t *>(m_base + sizeof(Shared_data_element<T>));
+        }
+        else
+        {
+            std::cout << "---\n";
+            std::cout << "Already registered. offset: " << shared_data.index << std::endl;
+        }
     }
 
     // void write(size_t index, const T &data_in)
@@ -103,7 +118,7 @@ public:
     //         throw std::out_of_range("Index out of range");
     //     }
 
-    //     Shared_data<T> *block ;//= get_data_block(index);
+    //     Shared_data_element<T> *block ;//= get_data_block(index);
     //     std::memcpy(&block->data, &data_in, sizeof(T));
     //     block->counter.fetch_add(1, std::memory_order_acq_rel);
     //     block->offset = 0;
@@ -118,7 +133,7 @@ public:
 
     //     static thread_local uint64_t last_counter[MAX_INSTANCES] = {0};
 
-    //     Shared_data<T> *block ;//= get_data_block(index);
+    //     Shared_data_element<T> *block ;//= get_data_block(index);
     //     uint64_t current = block->counter.load(std::memory_order_acquire);
 
     //     if (current == last_counter[index])
@@ -135,6 +150,7 @@ private:
     uint8_t *m_base = nullptr;
     int m_shm_fd = -1;
     bool m_is_owner = false;
+    bool offset = 0;
 };
 
 #endif // SHARED_MEMORY_BUS_H

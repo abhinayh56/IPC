@@ -65,6 +65,9 @@
         "cinttypes": "cpp",
         "csignal": "cpp",
         "semaphore": "cpp",
-        "core": "cpp"
+        "core": "cpp",
+        "cstdarg": "cpp",
+        "deque": "cpp",
+        "numeric": "cpp"
     }
 }
