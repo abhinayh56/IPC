@@ -6,6 +6,14 @@ struct Translation
     double x = 0.0;
     double y = 0.0;
     double z = 0.0;
+
+    void disp()
+    {
+        std::cout
+            << x << ", "
+            << y << ", "
+            << z << std::endl;
+    }
 };
 
 struct Orientation
@@ -14,6 +22,15 @@ struct Orientation
     double q1 = 0.0;
     double q2 = 0.0;
     double q3 = 0.0;
+
+    void disp()
+    {
+        std::cout
+            << q0 << ", "
+            << q1 << ", "
+            << q2 << ", "
+            << q3 << std::endl;
+    }
 };
 
 struct Pose

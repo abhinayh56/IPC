@@ -23,7 +23,6 @@ constexpr const char *SHM_NAME = "/shm_message_bus";
 constexpr size_t MAX_INSTANCES = 8;
 constexpr size_t SHM_SIZE = 10000; // padded total sizeces to store
 
-template <typename T>
 class SharedMemoryBusArray
 {
 public:
@@ -88,6 +87,7 @@ public:
         }
     }
 
+    template <typename T>
     void register_data(Shared_data_element<T> &shared_data)
     {
         if (shared_data.registered == false)
@@ -106,6 +106,7 @@ public:
         }
     }
 
+    template <typename T>
     void write(Shared_data_element<T> &data_in)
     {
         std::cout << "W : ";
@@ -115,6 +116,7 @@ public:
         block->counter.fetch_add(1, std::memory_order_acq_rel);
     }
 
+    template <typename T>
     bool read(Shared_data_element<T> &data_out)
     {
         std::cout << "R : ";
