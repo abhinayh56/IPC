@@ -74,7 +74,7 @@ public:
         }
 
         m_base = static_cast<uint8_t *>(ptr);
-        std::cout << "m_base: " << m_base << std::endl;
+        std::cout << "m_base: " << m_base << "sizeof(m_base): " << sizeof(m_base) << std::endl;
     }
 
     ~SharedMemoryBusArray()
@@ -92,59 +92,47 @@ public:
     {
         if (shared_data.registered == false)
         {
-            Shared_data_element<T> *p = reinterpret_cast<Shared_data_element<T> *>(m_base + sizeof(Shared_data_element<T>));
-            std::cout << "sizeof(Shared_data_element<T>): " << sizeof(Shared_data_element<T>) << "\n";
+            Shared_data_element<T> *p = reinterpret_cast<Shared_data_element<T> *>(m_base);
             new (&p->counter) std::atomic<uint64_t>(0);
             std::memset(&p->data, 0, sizeof(T));
             shared_data.index = reinterpret_cast<uint64_t>(p);
             shared_data.registered = true;
-
-            std::cout << "---\n";
-            std::cout << reinterpret_cast<Shared_data_element<T> *>(shared_data.index) << std::endl;
-
             m_base = reinterpret_cast<uint8_t *>(m_base + sizeof(Shared_data_element<T>));
+            std::cout << "Reg (1): " << shared_data.index << std::endl;
         }
         else
         {
-            std::cout << "---\n";
-            std::cout << "Already registered. offset: " << shared_data.index << std::endl;
+            std::cout << "Reg (0): " << shared_data.index << std::endl;
         }
     }
 
-    // void write(size_t index, const T &data_in)
-    // {
-    //     if (index >= MAX_INSTANCES)
-    //     {
-    //         throw std::out_of_range("Index out of range");
-    //     }
+    void write(Shared_data_element<T> &data_in)
+    {
+        std::cout << "W : ";
+        data_in.data.disp();
+        Shared_data_element<T> *block = reinterpret_cast<Shared_data_element<T> *>(data_in.index);
+        std::memcpy(&block->data, &data_in.data, sizeof(T));
+        block->counter.fetch_add(1, std::memory_order_acq_rel);
+    }
 
-    //     Shared_data_element<T> *block ;//= get_data_block(index);
-    //     std::memcpy(&block->data, &data_in, sizeof(T));
-    //     block->counter.fetch_add(1, std::memory_order_acq_rel);
-    //     block->offset = 0;
-    // }
+    bool read(Shared_data_element<T> &data_out)
+    {
+        std::cout << "R : ";
+        data_out.data.disp();
+        static thread_local uint64_t last_counter = {0};
 
-    // bool read(size_t index, T &data_out)
-    // {
-    //     if (index >= MAX_INSTANCES)
-    //     {
-    //         throw std::out_of_range("Index out of range");
-    //     }
+        Shared_data_element<T> *block = reinterpret_cast<Shared_data_element<T> *>(data_out.index);
+        uint64_t current = block->counter.load(std::memory_order_acquire);
 
-    //     static thread_local uint64_t last_counter[MAX_INSTANCES] = {0};
+        if (current == last_counter)
+        {
+            return false;
+        }
 
-    //     Shared_data_element<T> *block ;//= get_data_block(index);
-    //     uint64_t current = block->counter.load(std::memory_order_acquire);
-
-    //     if (current == last_counter[index])
-    //     {
-    //         return false;
-    //     }
-
-    //     data_out = block->data;
-    //     last_counter[index] = current;
-    //     return true;
-    // }
+        std::memcpy(&data_out.data, &block->data, sizeof(T));
+        last_counter = current;
+        return true;
+    }
 
 private:
     uint8_t *m_base = nullptr;

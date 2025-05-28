@@ -11,26 +11,20 @@ int main()
     Shared_data_element<Pose> pose_5;
 
     bus.register_data(pose_1);
-    bus.register_data(pose_1);
-    bus.register_data(pose_2);
-    bus.register_data(pose_2);
     bus.register_data(pose_2);
     bus.register_data(pose_3);
-    bus.register_data(pose_3);
-    bus.register_data(pose_4);
     bus.register_data(pose_4);
     bus.register_data(pose_5);
-    bus.register_data(pose_5);
 
-    // Write to slot 0
-    // bus.write(0, pose);
+    pose_1.data.seq = 105;
+    pose_1.data.translation = {10, 12, 14};
+    pose_1.data.orientation = {0.1, 0.3, 0.5, 0.7};
 
-    // // Read from slot 0
-    // Pose out;
-    // if (bus.read(0, out))
-    // {
-    //     out.disp();
-    // }
+    bus.write(pose_1);
+    bus.read(pose_1);
+    bus.write(pose_2);
+    bus.read(pose_2);
+    bus.read(pose_1);
 
     std::cout << "Complete" << std::endl;
 

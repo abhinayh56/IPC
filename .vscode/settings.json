@@ -68,6 +68,7 @@
         "core": "cpp",
         "cstdarg": "cpp",
         "deque": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "*.txx": "cpp"
     }
 }
