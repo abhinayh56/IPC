@@ -73,23 +73,6 @@ public:
         }
 
         m_base = static_cast<uint8_t *>(ptr);
-
-        if (create)
-        {
-            for (size_t i = 0; i < MAX_INSTANCES; ++i)
-            {
-                auto p = get_data_block(i);
-                std::cout << "p: " << i << ": " << p <<  std::endl;
-                if(i>0)
-                {
-                    std::cout << uint64_t(get_data_block(i)) - uint64_t(get_data_block(i-1)) << std::endl;
-                    std::cout << "sizeof(Shared_data<T>): " << sizeof(Shared_data<T>) << std::endl;
-                }
-                new (&p->counter) std::atomic<uint64_t>(0);
-                std::memset(&p->data, 0, sizeof(T));
-                std::memset(&p->offset, 0, sizeof(p->offset));
-            }
-        }
     }
 
     ~SharedMemoryBusArray()
@@ -100,6 +83,17 @@ public:
         if (m_is_owner)
         {
             shm_unlink(SHM_NAME);
+        }
+    }
+
+    void register_data()
+    {
+        for (size_t i = 0; i < MAX_INSTANCES; ++i)
+        {
+            auto p = get_data_block(i);
+            new (&p->counter) std::atomic<uint64_t>(0);
+            std::memset(&p->data, 0, sizeof(T));
+            std::memset(&p->offset, 0, sizeof(p->offset));
         }
     }
 
