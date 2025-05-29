@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <map>
 #include <cstring>
+#include <pthread.h>
 
 using namespace std;
 
@@ -34,6 +35,8 @@ public:
     template <typename T>
     void register_data_element(Data_element<T> &data_element)
     {
+        pthread_mutex_lock(&m_mutex);
+
         string path_key = data_element.path + "/" + data_element.key;
         std::cout << "---\n"
                   << path_key << "\n";
@@ -65,33 +68,43 @@ public:
             memcpy(&data_element.value, &m_data_buffer[data_element.index], sizeof(T));
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
+
+        pthread_mutex_unlock(&m_mutex);
     }
 
     template <typename T>
     void set_data_element(const Data_element<T> &data_element)
     {
+        pthread_mutex_lock(&m_mutex);
         memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
+        pthread_mutex_unlock(&m_mutex);
         std::cout << "W: " << data_element.value << std::endl;
     }
 
     template <typename T>
     void get_data(Data_element<T> &data_element)
     {
+        pthread_mutex_lock(&m_mutex);
         memcpy(&data_element.value, &m_data_buffer[data_element.index], sizeof(T));
+        pthread_mutex_unlock(&m_mutex);
         std::cout << "R: " << data_element.value << std::endl;
     }
 
 private:
     ITC()
     {
+        pthread_mutex_init(&m_mutex, nullptr);
     }
 
     ~ITC()
     {
+        pthread_mutex_destroy(&m_mutex);
     }
 
     uint8_t m_data_buffer[ITC_BUFFER_LEN];
     uint64_t m_offset = 0;
+
+    pthread_mutex_t m_mutex;
 
     map<string, uint64_t> m_data_element_map; // key (string name of data element) : value (pointer of data element)
 };
