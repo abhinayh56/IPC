@@ -42,7 +42,7 @@ public:
         if (it == m_data_element_map.end())
         {
             data_element.index = m_offset;
-            m_data_element_map.insert({path_key, reinterpret_cast<uint8_t *>(data_element.index)});
+            m_data_element_map.insert({path_key, data_element.index});
             m_offset = m_offset + sizeof(T);
             memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
 
@@ -50,7 +50,7 @@ public:
         }
         else
         {
-            data_element.index = reinterpret_cast<uint64_t>(m_data_element_map[path_key]);
+            data_element.index = m_data_element_map[path_key];
             memcpy(&data_element.value, &m_data_buffer[data_element.index], sizeof(T));
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
@@ -82,7 +82,7 @@ private:
     uint8_t m_data_buffer[ITC_BUFFER_LEN];
     uint64_t m_offset = 0;
 
-    map<string, uint8_t *> m_data_element_map; // key (string name of data element) : value (pointer of data element)
+    map<string, uint64_t> m_data_element_map; // key (string name of data element) : value (pointer of data element)
 };
 
 #endif // ITC_H
