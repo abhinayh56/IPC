@@ -28,7 +28,7 @@ public:
 
     static ITC &getInstance()
     {
-        static ITC instance; // Initialized on first call, thread-safe in C++11+
+        static ITC instance;
         return instance;
     }
 
@@ -45,15 +45,16 @@ public:
 
         if (it == m_data_element_map.end())
         {
-            if (m_offset + sizeof(T) > ITC_BUFFER_LEN)
+            size_t alignment = alignof(T);
+            uint64_t m_offset_required = (m_offset + alignment - 1) & ~(alignment - 1); // align up
+
+            if (m_offset_required + sizeof(T) > ITC_BUFFER_LEN)
             {
-                std::cout << "ERROR: Failed to register. ITC buffer overflow! " << path_key << std::endl;
+                std::cout << "ERROR: Failed to register. ITC buffer overflow! " << path_key << " Bytes required: " << m_offset_required + sizeof(T) - ITC_BUFFER_LEN << std::endl;
             }
             else
             {
-                size_t alignment = alignof(T);
-                m_offset = (m_offset + alignment - 1) & ~(alignment - 1); // align up
-
+                m_offset = m_offset_required;
                 data_element.index = m_offset;
                 m_data_element_map.insert({path_key, data_element.index});
                 m_offset += sizeof(T);
