@@ -41,11 +41,14 @@ public:
         auto it = m_data_element_map.find(path_key);
         if (it == m_data_element_map.end())
         {
+            size_t alignment = alignof(T);
+            m_offset = (m_offset + alignment - 1) & ~(alignment - 1); // align up
+
             data_element.index = m_offset;
             m_data_element_map.insert({path_key, data_element.index});
-            m_offset = m_offset + sizeof(T);
+            m_offset += sizeof(T);
             memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
-
+            
             std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
         else
