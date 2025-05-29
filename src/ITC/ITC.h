@@ -57,7 +57,7 @@ public:
     }
 
     template <typename T>
-    void set_data(const Data_element<T> &data_element)
+    void set_data_element(const Data_element<T> &data_element)
     {
         memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
         std::cout << "W: " << data_element.value << std::endl;
