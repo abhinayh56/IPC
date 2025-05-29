@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define ITC_BUFFER_LEN 10000
+#define ITC_BUFFER_LEN 15
 
 template <typename T>
 struct Data_element
@@ -39,17 +39,25 @@ public:
                   << path_key << "\n";
 
         auto it = m_data_element_map.find(path_key);
+
         if (it == m_data_element_map.end())
         {
-            size_t alignment = alignof(T);
-            m_offset = (m_offset + alignment - 1) & ~(alignment - 1); // align up
+            if (m_offset + sizeof(T) > ITC_BUFFER_LEN)
+            {
+                std::cout << "ERROR: Failed to register. ITC buffer overflow! " << path_key << std::endl;
+            }
+            else
+            {
+                size_t alignment = alignof(T);
+                m_offset = (m_offset + alignment - 1) & ~(alignment - 1); // align up
 
-            data_element.index = m_offset;
-            m_data_element_map.insert({path_key, data_element.index});
-            m_offset += sizeof(T);
-            memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
-            
-            std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
+                data_element.index = m_offset;
+                m_data_element_map.insert({path_key, data_element.index});
+                m_offset += sizeof(T);
+                memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
+
+                std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
+            }
         }
         else
         {
