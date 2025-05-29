@@ -16,7 +16,6 @@ struct Data_element
     std::string key = "";
     std::string path = "/";
     T value;
-    bool registered = false;
     uint64_t index = 0;
 };
 
@@ -55,8 +54,6 @@ public:
             memcpy(&data_element.value, &m_data_buffer[data_element.index], sizeof(T));
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
-
-        data_element.registered = true;
     }
 
     template <typename T>
