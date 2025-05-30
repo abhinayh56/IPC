@@ -1,7 +1,7 @@
 #ifndef ATM_2_H
 #define ATM_2_H
 
-#include "ITC.h"
+#include "ITC_2.h"
 
 class Arm_2
 {
@@ -11,10 +11,10 @@ public:
 
     void register_data_elements()
     {
-        data_store.register_data_element(element_encoder_count_1);
-        data_store.register_data_element(element_encoder_count_2);
-        data_store.register_data_element(element_encoder_count_1_other);
-        data_store.register_data_element(element_encoder_count_2_other);
+        data_store.register_data_element<int>(element_encoder_count_1);
+        data_store.register_data_element<int>(element_encoder_count_2);
+        data_store.register_data_element<int>(element_encoder_count_1_other);
+        data_store.register_data_element<int>(element_encoder_count_2_other);
     }
 
     void main_process()
