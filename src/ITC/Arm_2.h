@@ -1,7 +1,7 @@
 #ifndef ATM_2_H
 #define ATM_2_H
 
-#include "ITC_2.h"
+#include "ITC_IPC.h"
 
 class Arm_2
 {
