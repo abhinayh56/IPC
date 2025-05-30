@@ -86,17 +86,17 @@ public:
 
             ptr->value = data_element.value;
 
-            std::cout << "INFO: Data element registered. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
+            std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
         else
         {
             data_element.index = m_data_element_map[path_key];
 
             DataBlock<T> *ptr = reinterpret_cast<DataBlock<T> *>((uint8_t *)m_data_buffer + data_element.index);
-            pthread_mutex_lock(&ptr->mutex)
+            pthread_mutex_lock(&ptr->mutex);
             ptr->value = data_element.value;
             pthread_mutex_unlock(&ptr->mutex);
-            std::cout << "INFO: Data element already exists. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << std::endl;
+            std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
 
         pthread_mutex_unlock(&global_mutex);

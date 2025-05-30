@@ -2,8 +2,8 @@
 #define ATM_2_H
 
 // #include "ITC.h"
-#include "ITC_2.h"
-// #include "ITC_IPC.h"
+// #include "ITC_2.h"
+#include "ITC_IPC.h"
 
 class Arm_2
 {

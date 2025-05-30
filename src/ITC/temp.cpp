@@ -4,25 +4,25 @@ abhinayh56@Ubuntu24:~/Abhinay/IPC/src/ITC$ ./coderunner.sh
 INFO: Data element set.         Index: 0, Key: ENC_1, Path: /path_arm_1, Value: 124
 ---
 /path_arm_1/ENC_2
-INFO: Data element set.         Index: 4, Key: ENC_2, Path: /path_arm_1, Value: 180
+INFO: Data element set.         Index: 48, Key: ENC_2, Path: /path_arm_1, Value: 180
 ---
 /path_arm_2/ENC_1
-INFO: Data element set.         Index: 8, Key: ENC_1, Path: /path_arm_2, Value: 446
+INFO: Data element set.         Index: 96, Key: ENC_1, Path: /path_arm_2, Value: 446
 ---
 /path_arm_2/ENC_2
-INFO: Data element set.         Index: 12, Key: ENC_2, Path: /path_arm_2, Value: 456
+INFO: Data element set.         Index: 144, Key: ENC_2, Path: /path_arm_2, Value: 456
 ---
 /path_arm_2/ENC_1
-INFO: Data element already set. Index: 8, Key: ENC_1, Path: /path_arm_2, Value: 45
+INFO: Data element already set. Index: 96, Key: ENC_1, Path: /path_arm_2, Value: 45
 ---
 /path_arm_2/ENC_2
-INFO: Data element already set. Index: 12, Key: ENC_2, Path: /path_arm_2, Value: 18
+INFO: Data element already set. Index: 144, Key: ENC_2, Path: /path_arm_2, Value: 18
 ---
 /path_arm_1/ENC_1
 INFO: Data element already set. Index: 0, Key: ENC_1, Path: /path_arm_1, Value: 88
 ---
 /path_arm_1/ENC_2
-INFO: Data element already set. Index: 4, Key: ENC_2, Path: /path_arm_1, Value: 56
+INFO: Data element already set. Index: 48, Key: ENC_2, Path: /path_arm_1, Value: 56
 W: 124
 W: 180
 W: 446
