@@ -67,7 +67,7 @@ public:
         else
         {
             data_element.index = m_data_element_map[path_key];
-            memcpy(&data_element.value, &m_data_buffer[data_element.index], sizeof(T));
+            memcpy(&m_data_buffer[data_element.index], &data_element.value, sizeof(T));
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
         }
 
