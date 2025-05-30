@@ -26,7 +26,7 @@ public:
 
         data_store.get_data<int>(element_encoder_count_1);
         data_store.get_data<int>(element_encoder_count_2);
-        data_store.get_data<int>(element_encoder_count_2_other);
+        data_store.get_data<int>(element_encoder_count_1_other);
         data_store.get_data<int>(element_encoder_count_2_other);
     }
 
@@ -34,8 +34,8 @@ private:
     ITC &data_store = ITC::getInstance();
     Data_element<int32_t> element_encoder_count_1 = {"ENC_1", "/path_arm_2", 45};
     Data_element<int32_t> element_encoder_count_2 = {"ENC_2", "/path_arm_2", 18};
-    Data_element<int32_t> element_encoder_count_1_other = {"ENC_1", "/path_arm_1"};
-    Data_element<int32_t> element_encoder_count_2_other = {"ENC_2", "/path_arm_1"};
+    Data_element<int32_t> element_encoder_count_1_other = {"ENC_1", "/path_arm_1", 88};
+    Data_element<int32_t> element_encoder_count_2_other = {"ENC_2", "/path_arm_1", 678910};
 };
 
 #endif // ATM_2_H
