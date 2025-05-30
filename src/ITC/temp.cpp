@@ -39,4 +39,3 @@ R: 446
 R: 456
 R: 124
 R: 180
-abhinayh56@Ubuntu24:~/Abhinay/IPC/src/ITC$ 
