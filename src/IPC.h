@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define SHM_NAME "/itc_shared_memory"
+#define SHM_NAME "/ipc_shared_memory"
 #define SHM_SIZE 4096
 
 // Flat shared structure stored in memory (mutex + value)
