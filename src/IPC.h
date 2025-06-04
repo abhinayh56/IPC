@@ -86,7 +86,7 @@ public:
 
             ptr->value = data_element.value;
 
-            std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
+            std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
         }
         else
         {
@@ -96,7 +96,63 @@ public:
             pthread_mutex_lock(&ptr->mutex);
             ptr->value = data_element.value;
             pthread_mutex_unlock(&ptr->mutex);
-            std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " << data_element.value << std::endl;
+            std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
+        }
+
+        pthread_mutex_unlock(&global_mutex);
+    }
+
+    template <typename T>
+    void map_data_element(Data_element<T> &data_element)
+    {
+        pthread_mutex_lock(&global_mutex);
+
+        string path_key = data_element.path + "/" + data_element.key;
+        std::cout << "---\n"
+                  << path_key << "\n";
+
+        auto it = m_data_element_map.find(path_key);
+
+        if (it == m_data_element_map.end())
+        {
+            size_t alignment = alignof(DataBlock<T>);
+            uint64_t m_offset_required = (m_offset + alignment - 1) & ~(alignment - 1);
+            size_t required_size = m_offset_required + sizeof(DataBlock<T>);
+
+            if (required_size > SHM_SIZE)
+            {
+                std::cerr << "ERROR: Not enough shared memory for new data element." << std::endl;
+                pthread_mutex_unlock(&global_mutex);
+                return;
+            }
+
+            m_offset = m_offset_required;
+            data_element.index = m_offset;
+            m_data_element_map[path_key] = data_element.index;
+            m_offset += sizeof(DataBlock<T>);
+
+            // Init mutex inside shared memory
+            DataBlock<T> *ptr = reinterpret_cast<DataBlock<T> *>((uint8_t *)m_data_buffer + data_element.index);
+
+            pthread_mutexattr_t attr;
+            pthread_mutexattr_init(&attr);
+            pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+            pthread_mutex_init(&ptr->mutex, &attr);
+            pthread_mutexattr_destroy(&attr);
+
+            // ptr->value = data_element.value;
+
+            std::cout << "INFO: Data element set.         Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
+        }
+        else
+        {
+            data_element.index = m_data_element_map[path_key];
+
+            DataBlock<T> *ptr = reinterpret_cast<DataBlock<T> *>((uint8_t *)m_data_buffer + data_element.index);
+            pthread_mutex_lock(&ptr->mutex);
+            ptr->value = data_element.value;
+            pthread_mutex_unlock(&ptr->mutex);
+            std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
         }
 
         pthread_mutex_unlock(&global_mutex);
@@ -110,7 +166,7 @@ public:
         {
             ptr->value = data_element.value;
             pthread_mutex_unlock(&ptr->mutex);
-            std::cout << "W: " << data_element.value << std::endl;
+            // std::cout << "W: " << data_element.value << std::endl;
         }
         else
         {
@@ -126,7 +182,7 @@ public:
         {
             data_element.value = ptr->value;
             pthread_mutex_unlock(&ptr->mutex);
-            std::cout << "R: " << data_element.value << std::endl;
+            // std::cout << "R: " << data_element.value << std::endl;
         }
         else
         {
@@ -142,10 +198,50 @@ public:
             perror("shm_open");
             exit(1);
         }
+        {
+            std::cout << "shm created\n";
+        }
         if (ftruncate(fd, SHM_SIZE) == -1)
         {
             perror("ftruncate");
             exit(1);
+        }
+        {
+            std::cout << "shm size set\n";
+        }
+
+        m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if (m_data_buffer == MAP_FAILED)
+        {
+            perror("mmap");
+            exit(1);
+        }
+
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+        pthread_mutex_init(&global_mutex, &attr);
+        pthread_mutexattr_destroy(&attr);
+    }
+
+    void open()
+    {
+        int fd = shm_open(SHM_NAME, O_RDWR, 0666);
+        if (fd == -1)
+        {
+            perror("shm_open");
+            exit(1);
+        }
+        {
+            std::cout << "shm created\n";
+        }
+        if (ftruncate(fd, SHM_SIZE) == -1)
+        {
+            perror("ftruncate");
+            exit(1);
+        }
+        {
+            std::cout << "shm size set\n";
         }
 
         m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
