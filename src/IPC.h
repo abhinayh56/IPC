@@ -119,7 +119,7 @@ public:
     }
 
     template <typename T>
-    void get_data(Data_element<T> &data_element)
+    void get_data_element(Data_element<T> &data_element)
     {
         DataBlock<T> *ptr = reinterpret_cast<DataBlock<T> *>((uint8_t *)m_data_buffer + data_element.index);
         if (pthread_mutex_trylock(&ptr->mutex) == 0)
@@ -134,8 +134,7 @@ public:
         }
     }
 
-private:
-    IPC()
+    void create()
     {
         int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
         if (fd == -1)
@@ -163,10 +162,45 @@ private:
         pthread_mutexattr_destroy(&attr);
     }
 
-    ~IPC()
+    void destroy()
     {
         munmap(m_data_buffer, SHM_SIZE);
         shm_unlink(SHM_NAME);
+    }
+
+private:
+    IPC()
+    {
+        // int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+        // if (fd == -1)
+        // {
+        //     perror("shm_open");
+        //     exit(1);
+        // }
+        // if (ftruncate(fd, SHM_SIZE) == -1)
+        // {
+        //     perror("ftruncate");
+        //     exit(1);
+        // }
+
+        // m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        // if (m_data_buffer == MAP_FAILED)
+        // {
+        //     perror("mmap");
+        //     exit(1);
+        // }
+
+        // pthread_mutexattr_t attr;
+        // pthread_mutexattr_init(&attr);
+        // pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+        // pthread_mutex_init(&global_mutex, &attr);
+        // pthread_mutexattr_destroy(&attr);
+    }
+
+    ~IPC()
+    {
+        // munmap(m_data_buffer, SHM_SIZE);
+        // shm_unlink(SHM_NAME);
     }
 
     void *m_data_buffer;
