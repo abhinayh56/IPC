@@ -2,8 +2,8 @@
 #define ATM_1_H
 
 // #include "ITC.h"
-// #include "ITC_2.h"
-#include "ITC_IPC.h"
+#include "ITC_2.h"
+// #include "ITC_IPC.h"
 
 class Arm_1
 {
@@ -21,6 +21,7 @@ public:
 
     void main_process()
     {
+        std::cout << "---" << std::endl;
         data_store.set_data_element<int>(element_encoder_count_1);
         data_store.set_data_element<int>(element_encoder_count_2);
         data_store.set_data_element<int>(element_encoder_count_1_other);
