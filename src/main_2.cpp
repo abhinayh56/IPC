@@ -18,13 +18,13 @@ int main()
 
     while (1)
     {
-        // std::cout << "---" <<  std::endl;
-        // data_store.get_data_element<int>(element_encoder_count_1);
-        // data_store.get_data_element<int>(element_encoder_count_2);
-        // data_store.get_data_element<int>(element_encoder_count_1_other);
-        // data_store.get_data_element<int>(element_encoder_count_2_other);
+        std::cout << "---" <<  std::endl;
+        data_store.get_data_element<int>(element_encoder_count_1);
+        data_store.get_data_element<int>(element_encoder_count_2);
+        data_store.get_data_element<int>(element_encoder_count_1_other);
+        data_store.get_data_element<int>(element_encoder_count_2_other);
 
-        usleep(4000);
+        usleep(5000);
     }
 
     return 0;
