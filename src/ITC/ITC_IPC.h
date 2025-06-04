@@ -1,5 +1,5 @@
-#ifndef ITC_H
-#define ITC_H
+#ifndef ITC_IPC_H
+#define ITC_IPC_H
 
 #include <iostream>
 #include <stdint.h>
@@ -175,4 +175,4 @@ private:
     map<string, uint64_t> m_data_element_map;
 };
 
-#endif // ITC_H
+#endif // ITC_IPC_H

@@ -1,5 +1,5 @@
-#ifndef ITC_H
-#define ITC_H
+#ifndef ITC_2_H
+#define ITC_2_H
 
 #include <iostream>
 #include <stdint.h>
@@ -112,4 +112,4 @@ private:
     map<string, uint64_t> m_data_element_map; // key (string name of data element) : value (pointer of data element)
 };
 
-#endif // ITC_H
+#endif // ITC_2_H
