@@ -15,11 +15,11 @@ int main()
     Data_element<int32_t> element_encoder_count_2_other = {"ENC_2", "/path_arm_2", 400};
     Data_element<Pose> my_pose = {"POSE_EE", "/path_arm_7"};
 
-    data_store.map_data_element<int>(element_encoder_count_1);
-    data_store.map_data_element<int>(element_encoder_count_2);
-    data_store.map_data_element<int>(element_encoder_count_1_other);
-    data_store.map_data_element<int>(element_encoder_count_2_other);
-    data_store.map_data_element<Pose>(my_pose);
+    data_store.access_data_element<int>(element_encoder_count_1);
+    data_store.access_data_element<int>(element_encoder_count_2);
+    data_store.access_data_element<int>(element_encoder_count_1_other);
+    data_store.access_data_element<int>(element_encoder_count_2_other);
+    data_store.access_data_element<Pose>(my_pose);
 
     int last = 0;
 

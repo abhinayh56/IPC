@@ -73,11 +73,7 @@ public:
             exit(1);
         }
 
-        pthread_mutexattr_t attr;
-        pthread_mutexattr_init(&attr);
-        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        pthread_mutex_init(&global_mutex, &attr);
-        pthread_mutexattr_destroy(&attr);
+        init_shared_mutex(&global_mutex);
     }
 
     void open()
@@ -107,10 +103,15 @@ public:
             exit(1);
         }
 
+        init_shared_mutex(&global_mutex);
+    }
+
+    void init_shared_mutex(pthread_mutex_t *mutex)
+    {
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
         pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        pthread_mutex_init(&global_mutex, &attr);
+        pthread_mutex_init(mutex, &attr);
         pthread_mutexattr_destroy(&attr);
     }
 
@@ -171,7 +172,7 @@ public:
     }
 
     template <typename T>
-    void map_data_element(Data_element<T> &data_element)
+    void access_data_element(Data_element<T> &data_element)
     {
         pthread_mutex_lock(&global_mutex);
 
