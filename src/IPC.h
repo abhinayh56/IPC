@@ -73,7 +73,9 @@ public:
             exit(1);
         }
 
-        init_shared_mutex(&global_mutex);
+        global_mutex = reinterpret_cast<pthread_mutex_t *>((uint8_t *)m_data_buffer);
+        init_shared_mutex(global_mutex);
+        m_offset = sizeof(pthread_mutex_t);
     }
 
     void open()
@@ -103,7 +105,9 @@ public:
             exit(1);
         }
 
-        init_shared_mutex(&global_mutex);
+        global_mutex = reinterpret_cast<pthread_mutex_t *>((uint8_t *)m_data_buffer);
+        init_shared_mutex(global_mutex);
+        m_offset = sizeof(pthread_mutex_t);
     }
 
     void init_shared_mutex(pthread_mutex_t *mutex)
@@ -118,7 +122,7 @@ public:
     template <typename T>
     void register_data_element(Data_element<T> &data_element)
     {
-        pthread_mutex_lock(&global_mutex);
+        pthread_mutex_lock(global_mutex);
 
         string path_key = data_element.path + "/" + data_element.key;
         std::cout << "---\n"
@@ -135,7 +139,7 @@ public:
             if (required_size > SHM_SIZE)
             {
                 std::cerr << "ERROR: Not enough shared memory for new data element." << std::endl;
-                pthread_mutex_unlock(&global_mutex);
+                pthread_mutex_unlock(global_mutex);
                 return;
             }
 
@@ -168,13 +172,13 @@ public:
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
         }
 
-        pthread_mutex_unlock(&global_mutex);
+        pthread_mutex_unlock(global_mutex);
     }
 
     template <typename T>
     void access_data_element(Data_element<T> &data_element)
     {
-        pthread_mutex_lock(&global_mutex);
+        pthread_mutex_lock(global_mutex);
 
         string path_key = data_element.path + "/" + data_element.key;
         std::cout << "---\n"
@@ -191,7 +195,7 @@ public:
             if (required_size > SHM_SIZE)
             {
                 std::cerr << "ERROR: Not enough shared memory for new data element." << std::endl;
-                pthread_mutex_unlock(&global_mutex);
+                pthread_mutex_unlock(global_mutex);
                 return;
             }
 
@@ -224,7 +228,7 @@ public:
             std::cout << "INFO: Data element already set. Index: " << data_element.index << ", Key: " << data_element.key << ", Path: " << data_element.path << ", Value: " /*<< data_element.value*/ << std::endl;
         }
 
-        pthread_mutex_unlock(&global_mutex);
+        pthread_mutex_unlock(global_mutex);
     }
 
     template <typename T>
@@ -266,43 +270,13 @@ public:
     }
 
 private:
-    IPC()
-    {
-        // int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
-        // if (fd == -1)
-        // {
-        //     perror("shm_open");
-        //     exit(1);
-        // }
-        // if (ftruncate(fd, SHM_SIZE) == -1)
-        // {
-        //     perror("ftruncate");
-        //     exit(1);
-        // }
+    IPC() {}
 
-        // m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-        // if (m_data_buffer == MAP_FAILED)
-        // {
-        //     perror("mmap");
-        //     exit(1);
-        // }
-
-        // pthread_mutexattr_t attr;
-        // pthread_mutexattr_init(&attr);
-        // pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        // pthread_mutex_init(&global_mutex, &attr);
-        // pthread_mutexattr_destroy(&attr);
-    }
-
-    ~IPC()
-    {
-        // munmap(m_data_buffer, SHM_SIZE);
-        // shm_unlink(SHM_NAME);
-    }
+    ~IPC() {}
 
     void *m_data_buffer;
     uint64_t m_offset = 0;
-    pthread_mutex_t global_mutex;
+    pthread_mutex_t *global_mutex;
     map<string, uint64_t> m_data_element_map;
 };
 
