@@ -72,6 +72,7 @@ public:
             perror("mmap");
             exit(1);
         }
+        close(fd);
 
         global_mutex = reinterpret_cast<pthread_mutex_t *>((uint8_t *)m_data_buffer);
         init_shared_mutex(global_mutex);
@@ -118,6 +119,7 @@ public:
             perror("mmap");
             exit(1);
         }
+        close(fd);
 
         global_mutex = reinterpret_cast<pthread_mutex_t *>((uint8_t *)m_data_buffer);
         init_shared_mutex(global_mutex);
