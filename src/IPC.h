@@ -81,6 +81,8 @@ public:
 
     void open()
     {
+        usleep(5000000);
+        
         bool shm_open_flag = false;
 
         int fd = 0;
