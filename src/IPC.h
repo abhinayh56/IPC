@@ -80,22 +80,36 @@ public:
 
     void open()
     {
-        int fd = shm_open(SHM_NAME, O_RDWR, 0666);
-        if (fd == -1)
+        bool shm_open_flag = false;
+
+        int fd = 0;
+
+        while (shm_open_flag == false)
         {
-            perror("shm_open");
-            exit(1);
-        }
-        {
-            std::cout << "shm created\n";
-        }
-        if (ftruncate(fd, SHM_SIZE) == -1)
-        {
-            perror("ftruncate");
-            exit(1);
-        }
-        {
-            std::cout << "shm size set\n";
+            fd = shm_open(SHM_NAME, O_RDWR, 0666);
+            if (fd == -1)
+            {
+                perror("shm_open");
+                usleep(5000000);
+                continue;
+                // exit(1);
+            }
+            {
+                std::cout << "shm created\n";
+            }
+
+            if (ftruncate(fd, SHM_SIZE) == -1)
+            {
+                perror("ftruncate");
+                usleep(5000000);
+                continue;
+                // exit(1);
+            }
+            {
+                std::cout << "shm size set\n";
+            }
+
+            shm_open_flag = true;
         }
 
         m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
