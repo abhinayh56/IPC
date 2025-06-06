@@ -46,6 +46,74 @@ public:
         return instance;
     }
 
+    void create()
+    {
+        int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+        if (fd == -1)
+        {
+            perror("shm_open");
+            exit(1);
+        }
+        {
+            std::cout << "shm created\n";
+        }
+        if (ftruncate(fd, SHM_SIZE) == -1)
+        {
+            perror("ftruncate");
+            exit(1);
+        }
+        {
+            std::cout << "shm size set\n";
+        }
+
+        m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if (m_data_buffer == MAP_FAILED)
+        {
+            perror("mmap");
+            exit(1);
+        }
+
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+        pthread_mutex_init(&global_mutex, &attr);
+        pthread_mutexattr_destroy(&attr);
+    }
+
+    void open()
+    {
+        int fd = shm_open(SHM_NAME, O_RDWR, 0666);
+        if (fd == -1)
+        {
+            perror("shm_open");
+            exit(1);
+        }
+        {
+            std::cout << "shm created\n";
+        }
+        if (ftruncate(fd, SHM_SIZE) == -1)
+        {
+            perror("ftruncate");
+            exit(1);
+        }
+        {
+            std::cout << "shm size set\n";
+        }
+
+        m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        if (m_data_buffer == MAP_FAILED)
+        {
+            perror("mmap");
+            exit(1);
+        }
+
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+        pthread_mutex_init(&global_mutex, &attr);
+        pthread_mutexattr_destroy(&attr);
+    }
+
     template <typename T>
     void register_data_element(Data_element<T> &data_element)
     {
@@ -188,74 +256,6 @@ public:
         {
             std::cerr << "WARN: Mutex busy during read. Skipped.\n";
         }
-    }
-
-    void create()
-    {
-        int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
-        if (fd == -1)
-        {
-            perror("shm_open");
-            exit(1);
-        }
-        {
-            std::cout << "shm created\n";
-        }
-        if (ftruncate(fd, SHM_SIZE) == -1)
-        {
-            perror("ftruncate");
-            exit(1);
-        }
-        {
-            std::cout << "shm size set\n";
-        }
-
-        m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-        if (m_data_buffer == MAP_FAILED)
-        {
-            perror("mmap");
-            exit(1);
-        }
-
-        pthread_mutexattr_t attr;
-        pthread_mutexattr_init(&attr);
-        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        pthread_mutex_init(&global_mutex, &attr);
-        pthread_mutexattr_destroy(&attr);
-    }
-
-    void open()
-    {
-        int fd = shm_open(SHM_NAME, O_RDWR, 0666);
-        if (fd == -1)
-        {
-            perror("shm_open");
-            exit(1);
-        }
-        {
-            std::cout << "shm created\n";
-        }
-        if (ftruncate(fd, SHM_SIZE) == -1)
-        {
-            perror("ftruncate");
-            exit(1);
-        }
-        {
-            std::cout << "shm size set\n";
-        }
-
-        m_data_buffer = mmap(nullptr, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-        if (m_data_buffer == MAP_FAILED)
-        {
-            perror("mmap");
-            exit(1);
-        }
-
-        pthread_mutexattr_t attr;
-        pthread_mutexattr_init(&attr);
-        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-        pthread_mutex_init(&global_mutex, &attr);
-        pthread_mutexattr_destroy(&attr);
     }
 
     void destroy()
